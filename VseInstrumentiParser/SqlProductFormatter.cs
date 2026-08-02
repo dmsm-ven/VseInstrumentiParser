@@ -1,25 +1,24 @@
 ﻿using System.Globalization;
 using System.Text;
 using System.Web;
-using System.Windows;
 
 namespace VseInstrumentiParser;
 
 public class SqlProductFormatter()
 {
-    public void GenerateSqlForLastParsedProduct(ViParser parser, string manufacturerFolder)
+    public string GenerateSqlForLastParsedProduct(ViParser parser, string manufacturerFolder)
     {
         var sb = new StringBuilder();
 
         string desc = HttpUtility.HtmlEncode(parser.LastParseDescriptionHtml);
 
         //Описание
-        sb.AppendLine($"UPDATE oc_product_description SET description = '{desc}' WHERE model = '{parser.LastModelData}'");
+        sb.AppendLine($"UPDATE oc_product_description SET description = '{desc}' WHERE product_id = (SELECT product_id FROM oc_product WHERE model = '{parser.LastModelData}' LIMIT 1);");
 
         //Изображения
         if (parser.LastImagesData.Length > 0)
         {
-            sb.AppendLine($"UPDATE oc_product SET image = '{manufacturerFolder}/{parser.LastImagesData[0]}' WHERE model = '{parser.LastModelData}'");
+            sb.AppendLine($"UPDATE oc_product SET image = '{manufacturerFolder}/{parser.LastImagesData[0]}' WHERE model = '{parser.LastModelData}';");
             if (parser.LastImagesData.Length > 1)
             {
                 sb.AppendLine("INSERT INTO oc_product_image (product_id, image, sort_order) VALUES");
@@ -40,6 +39,6 @@ public class SqlProductFormatter()
                                                 height = '{parser.LastDimensionsData.HeightMm.ToString(new CultureInfo("en-EN"))}' 
                         WHERE model = '{parser.LastModelData}';");
 
-        Clipboard.SetText(sb.ToString());
+        return sb.ToString();
     }
 }

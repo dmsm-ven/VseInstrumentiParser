@@ -9,38 +9,68 @@
     Width="800"
     Height="450"
     mc:Ignorable="d">
-    <StackPanel
-        Margin="4"
-        HorizontalAlignment="Center"
-        Orientation="Vertical">
-
-        <Button
-            x:Name="btnParseFromHtml"
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <ListBox
+            x:Name="lbLogs"
+            Grid.Column="1"
+            Margin="2"
+            Background="Black"
+            Foreground="Yellow" />
+        <StackPanel
+            Grid.Column="0"
             Margin="4"
-            Click="btnParseFromHtml_Click"
-            Content="Загрузить изображения из HTML" />
+            HorizontalAlignment="Center"
+            Orientation="Vertical">
 
-        <TextBlock Margin="4" Text="Модель" />
-        <TextBox x:Name="txtModelName" Margin="4" />
+            <Button
+                x:Name="btnParseFromHtml"
+                Margin="4"
+                Click="btnParseFromHtml_Click"
+                Content="Загрузить изображения из HTML" />
 
-        <TextBox
-            x:Name="txtDescription"
-            MinHeight="80"
-            Margin="4"
-            d:Text="Описание ....."
-            Foreground="DarkGray"
-            IsReadOnly="True"
-            VerticalScrollBarVisibility="Auto" />
-        <CheckBox
-            Name="chkSaveDimensions"
-            Content="Сохранять габариты в файл (dimensions.txt)"
-            IsChecked="True" />
-        <CheckBox
-            Name="btnGenerateSql"
-            Content="Генерировать SQL"
-            IsChecked="True" />
-        <TextBlock Text="Путь до папки с изображениями бренда" />
-        <TextBox x:Name="txtImageManufacturerPath" Text="catalog/stayer/products/" />
+            <TextBlock Margin="4" Text="Модель" />
+            <TextBox x:Name="txtModelName" Margin="4" />
 
-    </StackPanel>
+            <TextBox
+                x:Name="txtDescription"
+                Height="80"
+                Margin="4"
+                d:Text="Описание ....."
+                Foreground="DarkGray"
+                IsReadOnly="True"
+                VerticalScrollBarVisibility="Auto" />
+            <CheckBox
+                Name="btnGenerateSql"
+                Margin="4"
+                Content="Генерировать SQL"
+                IsChecked="True" />
+
+            <CheckBox
+                Name="chkResizeImages"
+                Margin="4"
+                Content="Изменить размер скаченных изображений"
+                IsChecked="True" />
+
+            <CheckBox
+                Name="btnUploadToFtp"
+                Margin="4"
+                Content="Выгружать картинки на FTP"
+                IsChecked="True" />
+            <CheckBox
+                Name="chkAutoRunSql"
+                Margin="4"
+                Content="Автоматически запускать SQL-запросы"
+                IsChecked="True" />
+            <TextBlock Margin="4" Text="Путь до папки с изображениями бренда" />
+            <TextBox
+                x:Name="txtImageManufacturerPath"
+                Margin="4"
+                Text="catalog/stayer/products" />
+
+        </StackPanel>
+    </Grid>
 </Window>

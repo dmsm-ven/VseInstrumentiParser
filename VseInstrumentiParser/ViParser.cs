@@ -51,15 +51,21 @@ public class ViParser
 
     internal async Task<string> ParseFromHtml(string html,
         string model = null,
-        bool saveDimensions = false,
         IProgress<string> progress = null)
     {
+        ClearLastParsedData();
+
         var doc = new HtmlDocument();
         doc.LoadHtml(html);
 
         if (string.IsNullOrWhiteSpace(model))
         {
-            model = doc.DocumentNode.SelectSingleNode("//h1").InnerText.Split(' ').Last();
+            model = doc.DocumentNode.SelectSingleNode("//h1").InnerText.Split(' ').Last().Trim();
+        }
+
+        if (string.IsNullOrWhiteSpace(model) || model.Length < 3)
+        {
+            throw new ArgumentException("Model name is invalid or too short.");
         }
 
         LastModelData = model;
@@ -78,21 +84,27 @@ public class ViParser
             var bytes = await client.GetByteArrayAsync(image);
             var fileName = Path.Combine(downloadFolder, $"{model}_{image_order}{Path.GetExtension(image)}");
             await File.WriteAllBytesAsync(fileName, bytes);
+            LastImagesData[image_order - 1] = Path.GetFileNameWithoutExtension(fileName) + ".jpg";
             image_order++;
             progress?.Report($"Загрузка изображения {image_order}/{images.Length}");
-            LastImagesData[image_order - 1] = fileName;
         }
 
         progress?.Report($"Загружены изображения: {images.Length}");
 
-        string description = BuildDescription(doc, model, saveDimensions);
-
-
+        string description = BuildDescription(doc, model);
 
         return description;
     }
 
-    private string BuildDescription(HtmlDocument doc, string model, bool saveDimensions)
+    private void ClearLastParsedData()
+    {
+        LastDimensionsData = null;
+        LastImagesData = null;
+        LastModelData = null;
+        LastParseDescriptionHtml = null;
+    }
+
+    private string BuildDescription(HtmlDocument doc, string model)
     {
         var cardRoot = doc.DocumentNode.SelectSingleNode("//nav[@data-qa='cart-navigation']/following-sibling::div/div");
         string shortDescription = cardRoot.SelectSingleNode("./div/div").InnerHtml.Trim();
@@ -155,9 +167,9 @@ public class ViParser
             sb.Append(complectation);
         }
 
-        if (saveDimensions)
+        var dimRoot = cardRoot.SelectSingleNode(".//h3[contains(text(), 'Информация об упаковке')]");
+        if (dimRoot != null)
         {
-            var dimRoot = cardRoot.SelectSingleNode(".//h3[contains(text(), 'Информация об упаковке')]");
             var weight = dimRoot.SelectSingleNode("./following-sibling::p[2]")?.InnerText.Trim().Replace("Вес, кг: ", "");
             var length = dimRoot.SelectSingleNode("./following-sibling::p[3]")?.InnerText.Trim().Replace("Длина, мм: ", "");
             var width = dimRoot.SelectSingleNode("./following-sibling::p[4]")?.InnerText.Trim().Replace("Ширина, мм: ", "");
@@ -166,11 +178,11 @@ public class ViParser
             var dimData = DimensionsData.Parse(weight, length, width, height);
 
             LastDimensionsData = dimData;
-
-            File.AppendAllLines("dimensions.txt", new string[] { $"{model}\t{weight}\t{length}\t{width}\t{height}" });
         }
 
-        return sb.ToString();
+        LastParseDescriptionHtml = sb.ToString();
+
+        return LastParseDescriptionHtml;
     }
 
     private async Task<HtmlDocument> GetDocument(string uri)
