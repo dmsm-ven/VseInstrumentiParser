@@ -1,0 +1,46 @@
+﻿<Window
+    x:Class="VseInstrumentiParser.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:VseInstrumentiParser"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+    <StackPanel
+        Margin="4"
+        HorizontalAlignment="Center"
+        Orientation="Vertical">
+
+        <Button
+            x:Name="btnParseFromHtml"
+            Margin="4"
+            Click="btnParseFromHtml_Click"
+            Content="Загрузить изображения из HTML" />
+
+        <TextBlock Margin="4" Text="Модель" />
+        <TextBox x:Name="txtModelName" Margin="4" />
+
+        <TextBox
+            x:Name="txtDescription"
+            MinHeight="80"
+            Margin="4"
+            d:Text="Описание ....."
+            Foreground="DarkGray"
+            IsReadOnly="True"
+            VerticalScrollBarVisibility="Auto" />
+        <CheckBox
+            Name="chkSaveDimensions"
+            Content="Сохранять габариты в файл (dimensions.txt)"
+            IsChecked="True" />
+        <CheckBox
+            Name="btnGenerateSql"
+            Content="Генерировать SQL"
+            IsChecked="True" />
+        <TextBlock Text="Путь до папки с изображениями бренда" />
+        <TextBox x:Name="txtImageManufacturerPath" Text="catalog/stayer/products/" />
+
+    </StackPanel>
+</Window>
