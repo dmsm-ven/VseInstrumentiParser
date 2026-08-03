@@ -33,18 +33,7 @@
                 Margin="4"
                 Click="btnParseFromHtml_Click"
                 Content="Загрузить изображения из HTML" />
-            <Button
-                x:Name="btnSeleniumOpen"
-                Margin="4"
-                Click="btnSeleniumOpen_Click"
-                Content="Открыть браузер"
-                Visibility="Collapsed" />
-            <Button
-                x:Name="btnSeleniumSearch"
-                Margin="4"
-                Click="btnSeleniumSearch_Click"
-                Content="Поиск с использованием Selenium"
-                Visibility="Collapsed" />
+
 
             <TextBlock Margin="4" Text="Модель" />
             <TextBox x:Name="txtModelName" Margin="4" />
@@ -84,7 +73,7 @@
             <TextBox
                 x:Name="txtImageManufacturerPath"
                 Margin="4"
-                Text="catalog/stayer/products" />
+                Text="catalog/manufacturer/products" />
 
         </StackPanel>
     </Grid>

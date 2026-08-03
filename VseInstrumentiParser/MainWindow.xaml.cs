@@ -162,15 +162,13 @@ public partial class MainWindow : Window
     private async void btnSeleniumSearch_Click(object sender, RoutedEventArgs e)
     {
         IsEnabled = false;
-        await browserSimulator.SearchNext("36951-235-30", "Kraftool");
+        await browserSimulator.SearchNext("35161-100_z02", "Зубр");
         IsEnabled = true;
     }
 
     private async void btnSeleniumOpen_Click(object sender, RoutedEventArgs e)
     {
-        IsEnabled = false;
-        await browserSimulator.OpenBrowser();
-        IsEnabled = true;
+        browserSimulator.OpenBrowser();
     }
 
 }
