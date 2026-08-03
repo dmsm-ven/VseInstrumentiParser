@@ -65,7 +65,7 @@ public class ViParser
 
         if (string.IsNullOrWhiteSpace(model) || model.Length < 3)
         {
-            throw new ArgumentException("Model name is invalid or too short.");
+            throw new FormatException("Model name is invalid or too short.");
         }
 
         LastModelData = model;
@@ -78,22 +78,56 @@ public class ViParser
 
         LastImagesData = new string[images.Length];
 
-        int image_order = 1;
-        foreach (var image in images)
-        {
-            var bytes = await client.GetByteArrayAsync(image);
-            var fileName = Path.Combine(downloadFolder, $"{model}_{image_order}{Path.GetExtension(image)}");
-            await File.WriteAllBytesAsync(fileName, bytes);
-            LastImagesData[image_order - 1] = Path.GetFileNameWithoutExtension(fileName) + ".jpg";
-            image_order++;
-            progress?.Report($"Загрузка изображения {image_order}/{images.Length}");
-        }
+        await DownloadImages(model, images).ConfigureAwait(false);
 
         progress?.Report($"Загружены изображения: {images.Length}");
 
         string description = BuildDescription(doc, model);
 
         return description;
+    }
+
+    private async Task DownloadImages(string model, string[] images)
+    {
+        string pathModel = model.Replace("/", "_").Replace("\\", "_");
+
+        // Download images in parallel with limited concurrency to improve throughput
+        var imageCount = images.Length;
+        var maxDegreeOfParallelism = Math.Min(8, Math.Max(2, Environment.ProcessorCount));
+        var semaphore = new System.Threading.SemaphoreSlim(maxDegreeOfParallelism);
+        var downloadTasks = new List<Task>(imageCount);
+
+        for (int i = 0; i < imageCount; i++)
+        {
+            var index = i; // capture
+            var imageUrl = images[index];
+
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                await semaphore.WaitAsync().ConfigureAwait(false);
+
+                downloadTasks.Add(Task.Run(async () =>
+                {
+                    try
+                    {
+                        var bytes = await client.GetByteArrayAsync(imageUrl).ConfigureAwait(false);
+                        var fileName = Path.Combine(downloadFolder, $"{pathModel}_{index + 1}{Path.GetExtension(imageUrl)}");
+                        await File.WriteAllBytesAsync(fileName, bytes).ConfigureAwait(false);
+                        LastImagesData[index] = Path.GetFileNameWithoutExtension(fileName) + ".jpg";
+                    }
+                    finally
+                    {
+                        semaphore.Release();
+                    }
+                }));
+            }
+            else
+            {
+                LastImagesData[index] = string.Empty;
+            }
+        }
+
+        await Task.WhenAll(downloadTasks).ConfigureAwait(false);
     }
 
     private void ClearLastParsedData()
@@ -108,6 +142,11 @@ public class ViParser
     {
         var cardRoot = doc.DocumentNode.SelectSingleNode("//nav[@data-qa='cart-navigation']/following-sibling::div/div");
         string shortDescription = cardRoot.SelectSingleNode("./div/div").InnerHtml.Trim();
+        if (shortDescription.StartsWith("<h3")) // битое описание, его реально нет
+        {
+            shortDescription = "";
+        }
+
         string features = "";
         if (cardRoot.SelectSingleNode(".//p[contains(text(), 'Преимущества')]/following-sibling::div") != null)
         {

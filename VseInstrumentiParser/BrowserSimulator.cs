@@ -1,29 +1,29 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 
 namespace VseInstrumentiParser;
 
 public class BrowserSimulator
 {
     IWebDriver driver;
-    private readonly NetworkRequestHandler handler;
 
     public async Task OpenBrowser()
     {
-        ChromeOptions options = new ChromeOptions();
-
-        // Добавляем параметры
-        options.AddArgument("--start-maximized");
-        options.AddArgument("--profile-directory=Profile 2");
-        options.AddArgument(@"--user-data-dir=C:\Users\user\AppData\Local\Google\Chrome\User Data");
-
-        driver = new ChromeDriver(options);
-        driver.Navigate().GoToUrl("https://www.vseinstrumenti.ru/");
+        throw new NotImplementedException();
+        //ChromeOptions options = new ChromeOptions();
+        //
+        //// Добавляем параметры
+        //options.AddArgument("--start-maximized");
+        //options.AddArgument("--profile-directory=Profile 2");
+        //options.AddArgument(@"--user-data-dir=C:\Users\user\AppData\Local\Google\Chrome\User Data");
+        //
+        //driver = new ChromeDriver(options);
+        //driver.Navigate().GoToUrl("https://www.vseinstrumenti.ru/");
     }
 
     public async Task SearchNext(string modelOrSku, string manufacturerName)
     {
-        var searchBox = driver.FindElement(By.XPath("//input[@data-qa='header-search-input']"));
+        throw new NotImplementedException();
+        /*var searchBox = driver.FindElement(By.XPath("//input[@data-qa='header-search-input']"));
         searchBox.Clear();
         searchBox.SendKeys(modelOrSku);
 
@@ -39,6 +39,6 @@ public class BrowserSimulator
             {
                 link.Click();
             }
-        }
+        }*/
     }
 }

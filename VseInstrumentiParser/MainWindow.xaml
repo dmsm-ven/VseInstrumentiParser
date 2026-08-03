@@ -79,11 +79,7 @@
                 Margin="4"
                 Content="Автоматически запускать SQL-запросы"
                 IsChecked="True" />
-            <CheckBox
-                Name="chkPlayBeep"
-                Margin="4"
-                Content="Проигрывать звуковой сигнал"
-                IsChecked="True" />
+
             <TextBlock Margin="4" Text="Путь до папки с изображениями бренда" />
             <TextBox
                 x:Name="txtImageManufacturerPath"

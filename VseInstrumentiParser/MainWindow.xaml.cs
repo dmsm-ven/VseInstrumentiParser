@@ -34,11 +34,21 @@ public partial class MainWindow : Window
         IsEnabled = false;
         DeletePrevFiles();
 
-        var desc = await parser.ParseFromHtml(Clipboard.GetText(), txtModelName.Text, new Progress<string>((v) =>
+        string desc = "";
+        try
         {
-            Title = v;
-            this.AddLogEntry(v);
-        }));
+            desc = await parser.ParseFromHtml(Clipboard.GetText(), txtModelName.Text, new Progress<string>((v) =>
+            {
+                Title = v;
+                this.AddLogEntry(v);
+            }));
+        }
+        catch (FormatException)
+        {
+            MessageBox.Show("Ошибка загрузки модели (менее 3 символов)", "Информация", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            IsEnabled = true;
+            return;
+        }
 
         txtDescription.Text = desc.ToString();
         txtModelName.Text = "";
@@ -87,11 +97,6 @@ public partial class MainWindow : Window
 
         AddLogEntry($"Парсинг {parser.LastModelData ?? "???"} завершен", swGlobal);
         IsEnabled = true;
-
-        if (chkPlayBeep.IsChecked == true)
-        {
-            System.Media.SystemSounds.Beep.Play();
-        }
     }
 
     private void DeletePrevFiles()

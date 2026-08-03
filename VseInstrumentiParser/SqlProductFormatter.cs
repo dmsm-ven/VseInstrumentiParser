@@ -18,14 +18,14 @@ public class SqlProductFormatter()
         //Изображения
         if (parser.LastImagesData.Length > 0)
         {
-            sb.AppendLine($"UPDATE oc_product SET image = '{manufacturerFolder}/{parser.LastImagesData[0]}' WHERE model = '{parser.LastModelData}' OR sku = '{parser.LastModelData}';");
+            sb.AppendLine($"UPDATE oc_product SET image = '{manufacturerFolder}/{parser.LastImagesData[0].Replace("\\", "_")}' WHERE model = '{parser.LastModelData}' OR sku = '{parser.LastModelData}';");
             if (parser.LastImagesData.Length > 1)
             {
                 sb.AppendLine("INSERT INTO oc_product_image (product_id, image, sort_order) VALUES");
                 int sort_order = 0;
                 foreach (var image in parser.LastImagesData.Skip(1))
                 {
-                    sb.AppendLine($"((SELECT product_id FROM oc_product WHERE model = '{parser.LastModelData}' OR sku = '{parser.LastModelData}'), '{manufacturerFolder}/{image}', {sort_order++}),");
+                    sb.AppendLine($"((SELECT product_id FROM oc_product WHERE model = '{parser.LastModelData}' OR sku = '{parser.LastModelData}'), '{manufacturerFolder}/{image.Replace("\\", "_")}', {sort_order++}),");
                 }
                 sb.Remove(sb.Length - 3, 3);
                 sb.AppendLine(";");
