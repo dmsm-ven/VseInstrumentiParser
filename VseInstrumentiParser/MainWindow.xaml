@@ -8,6 +8,8 @@
     Title="MainWindow"
     Width="800"
     Height="450"
+    Closing="Window_Closing"
+    Loaded="Window_Loaded"
     mc:Ignorable="d">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -31,6 +33,18 @@
                 Margin="4"
                 Click="btnParseFromHtml_Click"
                 Content="Загрузить изображения из HTML" />
+            <Button
+                x:Name="btnSeleniumOpen"
+                Margin="4"
+                Click="btnSeleniumOpen_Click"
+                Content="Открыть браузер"
+                Visibility="Collapsed" />
+            <Button
+                x:Name="btnSeleniumSearch"
+                Margin="4"
+                Click="btnSeleniumSearch_Click"
+                Content="Поиск с использованием Selenium"
+                Visibility="Collapsed" />
 
             <TextBlock Margin="4" Text="Модель" />
             <TextBox x:Name="txtModelName" Margin="4" />
@@ -64,6 +78,11 @@
                 Name="chkAutoRunSql"
                 Margin="4"
                 Content="Автоматически запускать SQL-запросы"
+                IsChecked="True" />
+            <CheckBox
+                Name="chkPlayBeep"
+                Margin="4"
+                Content="Проигрывать звуковой сигнал"
                 IsChecked="True" />
             <TextBlock Margin="4" Text="Путь до папки с изображениями бренда" />
             <TextBox

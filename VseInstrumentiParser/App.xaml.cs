@@ -10,6 +10,7 @@ namespace VseInstrumentiParser;
 /// </summary>
 public partial class App : Application
 {
+    public const string SETTINGS_FILE_NAME = "settings.txt";
     public static IHost? AppHost { get; private set; }
     public App()
     {

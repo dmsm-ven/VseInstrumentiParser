@@ -108,7 +108,11 @@ public class ViParser
     {
         var cardRoot = doc.DocumentNode.SelectSingleNode("//nav[@data-qa='cart-navigation']/following-sibling::div/div");
         string shortDescription = cardRoot.SelectSingleNode("./div/div").InnerHtml.Trim();
-        string features = cardRoot.SelectSingleNode(".//p[contains(text(), 'Преимущества')]/following-sibling::div").InnerHtml.Trim();
+        string features = "";
+        if (cardRoot.SelectSingleNode(".//p[contains(text(), 'Преимущества')]/following-sibling::div") != null)
+        {
+            features = cardRoot.SelectSingleNode(".//p[contains(text(), 'Преимущества')]/following-sibling::div").InnerHtml.Trim();
+        }
         var characteristics = new List<(string Name, string Value)>();
 
         if (cardRoot.SelectSingleNode(".//div[@data-qa='product-card-characteristics']//div[@data-qa='specification-item']") != null)

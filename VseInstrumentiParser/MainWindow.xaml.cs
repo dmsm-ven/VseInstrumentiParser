@@ -14,10 +14,11 @@ public partial class MainWindow : Window
     private const string downloadFolder = @"C:\Users\user\Downloads";
     private readonly string imageResizerExeDir;
     private readonly ViParser parser = new(downloadFolder);
-    private readonly SqlProductFormatter sqlFormatter = new SqlProductFormatter();
+    private readonly SqlProductFormatter sqlFormatter = new();
     private readonly FtpUploader ftpUploader;
     private readonly DbQueryRunner dbQueryRunner;
     private readonly ObservableCollection<string> logItems = new();
+    private readonly BrowserSimulator browserSimulator = new();
     public MainWindow()
     {
         InitializeComponent();
@@ -86,6 +87,11 @@ public partial class MainWindow : Window
 
         AddLogEntry($"Парсинг {parser.LastModelData ?? "???"} завершен", swGlobal);
         IsEnabled = true;
+
+        if (chkPlayBeep.IsChecked == true)
+        {
+            System.Media.SystemSounds.Beep.Play();
+        }
     }
 
     private void DeletePrevFiles()
@@ -133,4 +139,33 @@ public partial class MainWindow : Window
         });
         await Task.Delay(TimeSpan.FromSeconds(0.5));
     }
+
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (!File.Exists(App.SETTINGS_FILE_NAME))
+        {
+            File.WriteAllText(App.SETTINGS_FILE_NAME, "catalog/manufacturer/products");
+        }
+        txtImageManufacturerPath.Text = File.ReadAllText(App.SETTINGS_FILE_NAME);
+    }
+
+    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+        File.WriteAllText(App.SETTINGS_FILE_NAME, txtImageManufacturerPath.Text);
+    }
+
+    private async void btnSeleniumSearch_Click(object sender, RoutedEventArgs e)
+    {
+        IsEnabled = false;
+        await browserSimulator.SearchNext("36951-235-30", "Kraftool");
+        IsEnabled = true;
+    }
+
+    private async void btnSeleniumOpen_Click(object sender, RoutedEventArgs e)
+    {
+        IsEnabled = false;
+        await browserSimulator.OpenBrowser();
+        IsEnabled = true;
+    }
+
 }
