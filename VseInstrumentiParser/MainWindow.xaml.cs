@@ -18,7 +18,6 @@ public partial class MainWindow : Window
     private readonly FtpUploader ftpUploader;
     private readonly DbQueryRunner dbQueryRunner;
     private readonly ObservableCollection<string> logItems = new();
-    private readonly BrowserSimulator browserSimulator = new();
     public MainWindow()
     {
         InitializeComponent();
@@ -157,18 +156,6 @@ public partial class MainWindow : Window
     private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
         File.WriteAllText(App.SETTINGS_FILE_NAME, txtImageManufacturerPath.Text);
-    }
-
-    private async void btnSeleniumSearch_Click(object sender, RoutedEventArgs e)
-    {
-        IsEnabled = false;
-        await browserSimulator.SearchNext("35161-100_z02", "Зубр");
-        IsEnabled = true;
-    }
-
-    private async void btnSeleniumOpen_Click(object sender, RoutedEventArgs e)
-    {
-        browserSimulator.OpenBrowser();
     }
 
 }
